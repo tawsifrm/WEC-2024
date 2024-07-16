@@ -135,34 +135,40 @@ def generate_map(grid):
     Args:
     - grid (list of lists): The grid to populate.
     """
+
     # Define corner positions
     corners = [(0, 0), (0, GRID_SIZE - 1), (GRID_SIZE - 1, 0), (GRID_SIZE - 1, GRID_SIZE - 1)]
     
-    # Randomly select start and finish positions from corners
-    start = random.choice(corners)
-    finish = random.choice([corner for corner in corners if corner != start])
-    start_x, start_y = start
-    finish_x, finish_y = finish
+    # Loop until a valid map is generated
+    while True:
+        # Randomly select start and finish positions from corners
+        start = random.choice(corners)
+        finish = random.choice([corner for corner in corners if corner != start])
+        start_x, start_y = start
+        finish_x, finish_y = finish
 
-    grid[start_x][start_y] = 'S'
-    grid[finish_x][finish_y] = 'F'
-
-    # Try to place rooms
-    for _ in range(50):  # Try placing rooms within a reasonable limit
-        room_type = random.choice(list(ROOM_TYPES.keys()))
-        x, y = random.randint(0, GRID_SIZE - 1), random.randint(0, GRID_SIZE - 1)
-        if can_place_room(grid, room_type, x, y):
-            place_room(grid, room_type, x, y)
-
-    # Ensure there's a valid path from Start to Finish and all rooms are connected
-    if not find_path(grid, start, finish) or not all_rooms_connected(grid):
-        print("No valid path found or rooms are not connected. Regenerating map...")
+        # Clear the grid
         for i in range(GRID_SIZE):
             for j in range(GRID_SIZE):
                 grid[i][j] = ' '
-        generate_map(grid)
-    else:
-        print("Valid path found and all rooms are connected.")
+
+        grid[start_x][start_y] = 'S'
+        grid[finish_x][finish_y] = 'F'
+
+        # Try to place rooms
+        for _ in range(100):  # Try placing rooms within a reasonable limit
+            room_type = random.choice(list(ROOM_TYPES.keys()))
+            x, y = random.randint(0, GRID_SIZE - 1), random.randint(0, GRID_SIZE - 1)
+            if can_place_room(grid, room_type, x, y):
+                place_room(grid, room_type, x, y)
+
+        # Ensure there's a valid path from Start to Finish and all rooms are connected
+        if find_path(grid, start, finish) and all_rooms_connected(grid):
+            print("Valid path found and all rooms are connected.")
+            break
+        else:
+            print("No valid path found or rooms are not connected. Regenerating map...")
+
 
 # Function to draw the grid using Turtle
 def draw_grid(grid):
@@ -173,6 +179,7 @@ def draw_grid(grid):
     - grid (list of lists): The grid to draw.
     """
     turtle.speed(0)
+    turtle.tracer(0, 0)  
     turtle.penup()
     for i in range(GRID_SIZE):
         for j in range(GRID_SIZE):
@@ -196,6 +203,7 @@ def draw_grid(grid):
                 turtle.right(90)
             turtle.end_fill()
             turtle.penup()
+    turtle.update()  # Update the screen
 
 # List of creative titles
 TITLES = [
