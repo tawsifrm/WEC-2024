@@ -1,6 +1,8 @@
 import turtle
 import random
 from collections import deque
+import time
+
 
 # Size of the grid and the tiles
 GRID_SIZE = 10
@@ -228,8 +230,15 @@ def draw_title(title):
     turtle.write(title, align="center", font=("Arial", 16, "bold"))
     turtle.hideturtle()
 
+start_time = time.time()
+
 # Generate the map
 generate_map(grid)
+
+end_time = time.time()
+elapsed_time = end_time - start_time
+
+print(f"Runtime: {elapsed_time:.6f} seconds")
 
 # Setup turtle display
 turtle.setup(GRID_SIZE * TILE_SIZE, GRID_SIZE * TILE_SIZE)
